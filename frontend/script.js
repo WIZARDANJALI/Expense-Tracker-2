@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = "https://expense-tracker-2-6s84.onrender.com";
 
 
 // ---------------- SIGNUP ----------------
