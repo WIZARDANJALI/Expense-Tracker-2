@@ -275,3 +275,7 @@ def category_summary():
         )
 
     return summary
+
+@app.get("/")
+def home():
+    return {"message": "Expense Tracker API is running 🚀"}
