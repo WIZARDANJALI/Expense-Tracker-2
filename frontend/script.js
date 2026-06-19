@@ -190,6 +190,8 @@ async function loadExpenses() {
 }
 
 // ---------------- LOAD CHART ----------------
+let expenseChart = null;
+
 async function loadChart() {
 
     try {
@@ -198,31 +200,53 @@ async function loadChart() {
 
         const data = await res.json();
 
-        const chartCanvas = document.getElementById("chart");
+        const chartCanvas =
+            document.getElementById("chart");
 
         if (!chartCanvas) return;
 
-        new Chart(chartCanvas, {
-            type: "pie",
+        if (expenseChart) {
+            expenseChart.destroy();
+        }
+
+        expenseChart = new Chart(chartCanvas, {
+
+            type: "doughnut",
+
             data: {
                 labels: Object.keys(data),
+
                 datasets: [{
                     data: Object.values(data),
+
                     backgroundColor: [
                         "#3b82f6",
                         "#10b981",
                         "#f59e0b",
                         "#ef4444",
-                        "#8b5cf6"
-                    ]
+                        "#8b5cf6",
+                        "#06b6d4"
+                    ],
+
+                    borderWidth: 0
                 }]
             },
+
             options: {
+
                 responsive: true,
+
+                maintainAspectRatio: false,
+
                 plugins: {
+
                     legend: {
+
+                        position: "bottom",
+
                         labels: {
-                            color: "#ffffff"
+                            color: "#ffffff",
+                            padding: 20
                         }
                     }
                 }
@@ -234,7 +258,6 @@ async function loadChart() {
         console.error("Chart Error:", error);
     }
 }
-
 
 // ---------------- AUTO LOAD DASHBOARD ----------------
 window.onload = () => {

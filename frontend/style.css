@@ -209,3 +209,9 @@ canvas{
         width:100%;
     }
 }
+
+#chart 
+{
+    width: 100% !important;
+    height: 320px !important;
+}
