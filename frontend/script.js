@@ -82,6 +82,37 @@ async function addExpense() {
     loadExpenses();
 }
 
+// ---------------- DELETE EXPENSE ----------------
+async function deleteExpense(id) {
+
+    const confirmDelete =
+        confirm("Delete this expense?");
+
+    if (!confirmDelete) return;
+
+    try {
+
+        const res = await fetch(
+            `${BASE_URL}/expenses/${id}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+        const result = await res.json();
+
+        alert(result.message);
+
+        loadExpenses();
+        loadChart();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Error deleting expense");
+    }
+}
 
 // ---------------- LOAD EXPENSES + SUMMARY FIX ----------------
 async function loadExpenses() {
@@ -99,22 +130,31 @@ async function loadExpenses() {
     let count = data.length;
     let categoryCount = {};
 
-    data.forEach(e => {
+   data.forEach(e => {
 
-        rows += `
-        <tr>
-            <td>${e.id}</td>
-            <td>${e.title}</td>
-            <td>₹${e.amount}</td>
-            <td>${e.category}</td>
-        </tr>
-        `;
+    rows += `
+    <tr>
+        <td>${e.id}</td>
+        <td>${e.title}</td>
+        <td>₹${e.amount}</td>
+        <td>${e.category}</td>
 
-        total += e.amount;
+        <td>
+            <button
+                class="delete-btn"
+                onclick="deleteExpense(${e.id})"
+            >
+                Delete
+            </button>
+        </td>
+    </tr>
+    `;
 
-        categoryCount[e.category] =
-            (categoryCount[e.category] || 0) + 1;
-    });
+    total += e.amount;
+
+    categoryCount[e.category] =
+        (categoryCount[e.category] || 0) + 1;
+});
 
     // TABLE
     document.querySelector("#expenseTable tbody").innerHTML = rows;
