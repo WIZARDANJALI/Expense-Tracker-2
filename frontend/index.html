@@ -7,20 +7,39 @@
 
 <body>
 
-<div class="container">
+<div class="auth-container">
 
-    <h1>Login</h1>
+    <div class="auth-card">
 
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Password">
+        <h1>Expense Tracker</h1>
 
-    <button onclick="login()">Login</button>
+        <p>Track expenses and manage budgets</p>
 
-    <p>New user? <a href="signup.html">Sign Up</a></p>
+        <input
+            type="email"
+            id="loginEmail"
+            placeholder="Email"
+        >
+
+        <input
+            type="password"
+            id="loginPassword"
+            placeholder="Password"
+        >
+
+        <button onclick="login()">
+            Login
+        </button>
+
+        <div class="auth-switch">
+            New user?
+            <a href="signup.html">Sign Up</a>
+        </div>
+
+    </div>
 
 </div>
 
 <script src="script.js"></script>
 
 </body>
-</html>
