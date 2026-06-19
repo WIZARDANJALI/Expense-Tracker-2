@@ -105,7 +105,7 @@ async function loadExpenses() {
         <tr>
             <td>${e.id}</td>
             <td>${e.title}</td>
-            <td>${e.amount}</td>
+            <td>₹${e.amount}</td>
             <td>${e.category}</td>
         </tr>
         `;
@@ -116,18 +116,17 @@ async function loadExpenses() {
             (categoryCount[e.category] || 0) + 1;
     });
 
-    // FIX: table update (IMPORTANT)
+    // TABLE
     document.querySelector("#expenseTable tbody").innerHTML = rows;
 
-    // SUMMARY CARDS (dashboard fix)
+    // SUMMARY CARDS
     const totalEl = document.getElementById("totalExpense");
     const countEl = document.getElementById("totalCount");
     const topEl = document.getElementById("topCategory");
 
-    if (totalEl) totalEl.innerText = total;
+    if (totalEl) totalEl.innerText = `₹${total}`;
     if (countEl) countEl.innerText = count;
 
-    // top category
     let topCategory = "-";
     let max = 0;
 
@@ -139,103 +138,112 @@ async function loadExpenses() {
     }
 
     if (topEl) topEl.innerText = topCategory;
+
+    // BUDGET PROGRESS
+    const budget = 50000;
+
+    const percentage = Math.min(
+        (total / budget) * 100,
+        100
+    );
+
+    const fill = document.getElementById("progressFill");
+
+    if (fill) {
+        fill.style.width = percentage + "%";
+    }
+
+    const budgetText =
+        document.getElementById("budgetText");
+
+    if (budgetText) {
+        budgetText.innerText =
+            `₹${total} / ₹${budget} Used`;
+    }
+
+    // RECENT ACTIVITY
+    const activity =
+        document.getElementById("activityList");
+
+    if (activity) {
+
+        activity.innerHTML = "";
+
+        data
+            .slice(-5)
+            .reverse()
+            .forEach(expense => {
+
+                activity.innerHTML += `
+                <li>
+                    ${expense.title}
+                    - ₹${expense.amount}
+                </li>
+                `;
+            });
+
+        if (data.length === 0) {
+            activity.innerHTML =
+                "<li>No expenses added yet</li>";
+        }
+    }
 }
-
-const budget = 50000;
-
-const percentage = Math.min(
-    (total / budget) * 100,
-    100
-);
-
-const fill = document.getElementById("progressFill");
-
-if(fill){
-    fill.style.width = percentage + "%";
-}
-
-const budgetText =
-    document.getElementById("budgetText");
-
-if(budgetText){
-    budgetText.innerText =
-    `₹${total} / ₹${budget} Used`;
-}
-
-const activity =
-document.getElementById("activityList");
-
-if(activity){
-
-    activity.innerHTML = "";
-
-    data
-    .slice(-5)
-    .reverse()
-    .forEach(expense=>{
-
-        activity.innerHTML += `
-        <li>
-            ${expense.title}
-            - ₹${expense.amount}
-        </li>
-        `;
-    });
-}
-
-// ---------------- LOAD BUDGET ----------------
-async function loadBudgets() {
-
-    const res = await fetch(`${BASE_URL}/budget`);
-
-    const data = await res.json();
-
-    let rows = "";
-
-    data.forEach(b => {
-        rows += `
-        <tr>
-            <td>${b.month}</td>
-            <td>${b.budget_amount}</td>
-        </tr>
-        `;
-    });
-
-    document.querySelector("#budgetTable tbody").innerHTML = rows;
-}
-
 
 // ---------------- LOAD CHART ----------------
 async function loadChart() {
 
-    const res = await fetch(`${BASE_URL}/category-summary`);
+    try {
 
-    const data = await res.json();
+        const res = await fetch(`${BASE_URL}/category-summary`);
 
-    new Chart(document.getElementById("chart"), {
-        type: "pie",
-        data: {
-            labels: Object.keys(data),
-            datasets: [{
-                data: Object.values(data),
-                backgroundColor: [
-                    "#3b82f6",
-                    "#10b981",
-                    "#f59e0b",
-                    "#ef4444",
-                    "#8b5cf6"
-                ]
-            }]
-        }
-    });
+        const data = await res.json();
+
+        const chartCanvas = document.getElementById("chart");
+
+        if (!chartCanvas) return;
+
+        new Chart(chartCanvas, {
+            type: "pie",
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    data: Object.values(data),
+                    backgroundColor: [
+                        "#3b82f6",
+                        "#10b981",
+                        "#f59e0b",
+                        "#ef4444",
+                        "#8b5cf6"
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: "#ffffff"
+                        }
+                    }
+                }
+            }
+        });
+
+    } catch (error) {
+
+        console.error("Chart Error:", error);
+    }
 }
+
 
 // ---------------- AUTO LOAD DASHBOARD ----------------
 window.onload = () => {
 
-    if (window.location.pathname.includes("dashboard")) {
+    if (
+        window.location.pathname.includes("dashboard")
+    ) {
+
         loadExpenses();
-        loadBudgets();
         loadChart();
     }
 };
