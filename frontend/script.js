@@ -141,6 +141,47 @@ async function loadExpenses() {
     if (topEl) topEl.innerText = topCategory;
 }
 
+const budget = 50000;
+
+const percentage = Math.min(
+    (total / budget) * 100,
+    100
+);
+
+const fill = document.getElementById("progressFill");
+
+if(fill){
+    fill.style.width = percentage + "%";
+}
+
+const budgetText =
+    document.getElementById("budgetText");
+
+if(budgetText){
+    budgetText.innerText =
+    `₹${total} / ₹${budget} Used`;
+}
+
+const activity =
+document.getElementById("activityList");
+
+if(activity){
+
+    activity.innerHTML = "";
+
+    data
+    .slice(-5)
+    .reverse()
+    .forEach(expense=>{
+
+        activity.innerHTML += `
+        <li>
+            ${expense.title}
+            - ₹${expense.amount}
+        </li>
+        `;
+    });
+}
 
 // ---------------- LOAD BUDGET ----------------
 async function loadBudgets() {
@@ -176,12 +217,18 @@ async function loadChart() {
         data: {
             labels: Object.keys(data),
             datasets: [{
-                data: Object.values(data)
+                data: Object.values(data),
+                backgroundColor: [
+                    "#3b82f6",
+                    "#10b981",
+                    "#f59e0b",
+                    "#ef4444",
+                    "#8b5cf6"
+                ]
             }]
         }
     });
 }
-
 
 // ---------------- AUTO LOAD DASHBOARD ----------------
 window.onload = () => {
