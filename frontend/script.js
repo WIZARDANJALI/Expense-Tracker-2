@@ -20,7 +20,7 @@ async function signup() {
 
     alert(result.message || "Signup successful");
 
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 
 
@@ -56,7 +56,7 @@ async function login() {
 // ---------------- LOGOUT ----------------
 function logout() {
     localStorage.removeItem("token");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 
 
