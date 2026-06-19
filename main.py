@@ -142,6 +142,54 @@ def set_budget(budgets: List[Budget]):
         "message": "Budgets Added"
     }
 
+@app.get("/budget")
+def get_budgets():
+
+    result = (
+        supabase
+        .table("budgets")
+        .select("*")
+        .execute()
+    )
+
+    return result.data
+
+@app.put("/budget/{budget_id}")
+def update_budget(
+    budget_id: int,
+    budget: Budget
+):
+
+    supabase.table(
+        "budgets"
+    ).update({
+        "month": budget.month,
+        "budget_amount": budget.budget_amount
+    }).eq(
+        "id",
+        budget_id
+    ).execute()
+
+    return {
+        "message": "Budget Updated"
+    }
+    
+@app.delete("/budget/{budget_id}")
+def delete_budget(
+    budget_id: int
+):
+
+    supabase.table(
+        "budgets"
+    ).delete().eq(
+        "id",
+        budget_id
+    ).execute()
+
+    return {
+        "message": "Budget Deleted"
+    }
+    
 # -------------------------
 # DASHBOARD
 # -------------------------
